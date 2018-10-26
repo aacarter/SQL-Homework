@@ -191,50 +191,49 @@ order by rental_rate desc;
 
 -- 7f. display how much business, in dollars, each store brought in
 -- sum staff id which links to  rental then store
-
-select * from payment;
-select * from staff;
-select * from address;
-
-select address
+select address, sum(amount) 
 from address
-where address_id in
-(
-	select address_id
-    from staff
-    where staff_id in
-    (
-		select staff_id
-        from payment
-        where sum(payment) 
-	)
-);
-
-select 
-
-select payment.staff_id, payment.amount, staff.staff_id, staff.address_id, staff.store_id
-from payment
-inner join staff on 
-payment.staff_id = staff.staff_id
-select staff.address_id, payment.staff_id
-
-
-SELECT payment.staff_id, SUM(payment.amount), staff.staff_id, staff.address_id, staff.store_id, address.address, address.address_id
-FROM payment 
-INNER JOIN staff
-ON payment.staff_id = staff.staff_id 
--group by payment.staff_id
-INNER JOIN address
-ON staff.address_id =  address.address_id;
--- GROUP BY customer.customer_id
--- ORDER BY customer.last_name;
-
+join staff on address.address_id = staff.address_id
+join payment on staff.staff_id = payment.staff_id
+group by staff.staff_id;
 
 
 -- 7g. Write a query to display for each store its store ID, city, and country.
--- select * from store;
--- select * from address;
--- select * from city;
+select address, store_id, city, country 
+from address
+join store on store.address_id = address.address_id
+join city on address.city_id = city.city_id
+join country on country.country_id = city.country_id;
+
+-- 7h. List the top five genres in gross revenue in descending order
+-- category, film_category, inventory, payment, and rental
+select name, sum(amount)
+from category
+join film_category on category.category_id = film_category.category_id
+join inventory on film_category.film_id = inventory.film_id
+join rental on inventory.inventory_id = rental.inventory_id
+join payment on rental.rental_id = payment.rental_id
+group by category.name
+order by sum(amount) desc
+limit 5;
+
+-- 8a. create a view of the top 5 grossing genres
+create view top_grossing_genres as
+select name, sum(amount)
+from category
+join film_category on category.category_id = film_category.category_id
+join inventory on film_category.film_id = inventory.film_id
+join rental on inventory.inventory_id = rental.inventory_id
+join payment on rental.rental_id = payment.rental_id
+group by category.name
+order by sum(amount) desc
+limit 5;
+
+-- 8b. display the view
+select * from sakila.top_grossing_genres;
+
+-- 8c. delete the view
+drop view sakila.top_grossing_genres;
 
 
 
