@@ -167,4 +167,74 @@ where address_id in
 );
 
 -- 7d. identify all movies categorized as family films
+select * from film_category;
+select * from category;
+
+select title
+from film
+where film_id in
+(
+	select film_id
+    from film_category
+    where category_id in
+    (
+		select category_id
+        from category
+        where category_id = 8
+	)
+);
+
+-- 7e. Display the most frequently rented movies in descending order.
+select title, rental_rate
+from film
+order by rental_rate desc;
+
+-- 7f. display how much business, in dollars, each store brought in
+-- sum staff id which links to  rental then store
+
+select * from payment;
+select * from staff;
+select * from address;
+
+select address
+from address
+where address_id in
+(
+	select address_id
+    from staff
+    where staff_id in
+    (
+		select staff_id
+        from payment
+        where sum(payment) 
+	)
+);
+
+select 
+
+select payment.staff_id, payment.amount, staff.staff_id, staff.address_id, staff.store_id
+from payment
+inner join staff on 
+payment.staff_id = staff.staff_id
+select staff.address_id, payment.staff_id
+
+
+SELECT payment.staff_id, SUM(payment.amount), staff.staff_id, staff.address_id, staff.store_id, address.address, address.address_id
+FROM payment 
+INNER JOIN staff
+ON payment.staff_id = staff.staff_id 
+-group by payment.staff_id
+INNER JOIN address
+ON staff.address_id =  address.address_id;
+-- GROUP BY customer.customer_id
+-- ORDER BY customer.last_name;
+
+
+
+-- 7g. Write a query to display for each store its store ID, city, and country.
+-- select * from store;
+-- select * from address;
+-- select * from city;
+
+
 
